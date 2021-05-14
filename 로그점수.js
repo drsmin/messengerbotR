@@ -87,7 +87,26 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
           var mid = data.select("#top-box > div.stats > div.median-perf-avg > table > tbody > tr:nth-child(1) > td:nth-child(2)").text();
           //Log.debug("mid=" + mid);
           
-          replier.reply(cmd[1] + "/" + rDiv + "[" + zone + "]\nbest : " + best + "\nmedian : " + mid);
+          var bossTrs = data.select("#boss-table-" + zoneId + " > tbody > tr");
+          
+          var bossDmg = "";
+          
+          for (var idx = 0, _max = bossTrs.size() ; idx < _max ; idx ++) {
+              var bossTr = bossTrs.get(idx);
+              
+              var bossNm = bossTr.select("td:nth-child(1) > div > div:nth-child(1) > a").text();
+              var bossBest = bossTr.select("td:nth-child(2)").text();
+              var bossDps = bossTr.select("td:nth-child(3)").text();
+              var bossKill = bossTr.select("td:nth-child(4)").text();
+              
+              bossDmg = bossDmg + "[" + bossNm + "] " + bossBest + "점 / " + bossDps + " / " + bossKill + "킬\n";
+          }
+          
+          replier.reply(
+          "https://ko.classic.warcraftlogs.com/character/id/" + characterId + "\n\n"
+          + "[" + cmd[1] + " / " + rDiv + " / " + zone + "]\nbest : " + best + "\nmedian : " + mid
+          + "\n\n" + bossDmg
+          );
         } catch (e) {
           replier.reply("와우로그 정보 불러오기 실패");
           Log.error(e);
